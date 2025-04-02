@@ -3,8 +3,6 @@ part of openidconnect;
 class InteractiveAuthorizationRequest extends TokenRequest {
   static const String _charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
 
-  final EdgeInsets dialogPadding;
-  final Color iconsColor;
   final int popupWidth;
   final int popupHeight;
   final String codeVerifier;
@@ -29,8 +27,6 @@ class InteractiveAuthorizationRequest extends TokenRequest {
     String? loginHint,
     Iterable<String>? prompts,
     Map<String, String>? additionalParameters,
-    EdgeInsets dialogPadding = EdgeInsets.zero,
-    Color iconsColor = Colors.black,
     int popupWidth = 640,
     int popupHeight = 600,
     bool useWebPopup = true,
@@ -50,8 +46,6 @@ class InteractiveAuthorizationRequest extends TokenRequest {
       codeVerifier: codeVerifier,
       codeChallenge: codeChallenge,
       additionalParameters: additionalParameters,
-      dialogPadding: dialogPadding,
-      iconsColor: iconsColor,
       clientSecret: clientSecret,
       loginHint: loginHint,
       prompts: prompts,
@@ -73,8 +67,6 @@ class InteractiveAuthorizationRequest extends TokenRequest {
     String? loginHint,
     super.prompts,
     Map<String, String>? additionalParameters,
-    this.dialogPadding = EdgeInsets.zero,
-    this.iconsColor = Colors.black,
     this.popupWidth = 640,
     this.popupHeight = 480,
     this.useWebPopup = true,
