@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.0.38] = April 2th, 2025
+
+- Android and iOS ui improvements
+
 ## [1.0.37] = April 1st, 2025
 
 - Update dependencies

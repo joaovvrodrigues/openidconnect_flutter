@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:web/web.dart' as html;
-
 // In order to *not* need this ignore, consider extracting the "web" version
 // of your plugin as a separate package, instead of inlining it in the same
 // package as the core of your plugin.
@@ -9,6 +7,7 @@ import 'package:web/web.dart' as html;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:openidconnect_platform_interface/openidconnect_platform_interface.dart';
+import 'package:web/web.dart' as html;
 
 /// A web implementation of the OpenidconnectWeb plugin.
 class OpenIdConnectWeb extends OpenIdConnectPlatform {

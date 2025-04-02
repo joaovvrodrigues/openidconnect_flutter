@@ -1,9 +1,10 @@
 part of openidconnect;
 
 class InteractiveAuthorizationRequest extends TokenRequest {
-  static const String _charset =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+  static const String _charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
 
+  final EdgeInsets dialogPadding;
+  final Color iconsColor;
   final int popupWidth;
   final int popupHeight;
   final String codeVerifier;
@@ -28,18 +29,17 @@ class InteractiveAuthorizationRequest extends TokenRequest {
     String? loginHint,
     Iterable<String>? prompts,
     Map<String, String>? additionalParameters,
+    EdgeInsets dialogPadding = EdgeInsets.zero,
+    Color iconsColor = Colors.black,
     int popupWidth = 640,
     int popupHeight = 600,
     bool useWebPopup = true,
   }) async {
-    final codeVerifier = List.generate(
-        128, (i) => _charset[Random.secure().nextInt(_charset.length)]).join();
+    final codeVerifier = List.generate(128, (i) => _charset[Random.secure().nextInt(_charset.length)]).join();
 
     final sha256 = crypto.Sha256();
 
-    final codeChallenge = base64Url
-        .encode((await sha256.hash(ascii.encode(codeVerifier))).bytes)
-        .replaceAll('=', '');
+    final codeChallenge = base64Url.encode((await sha256.hash(ascii.encode(codeVerifier))).bytes).replaceAll('=', '');
 
     return InteractiveAuthorizationRequest._(
       clientId: clientId,
@@ -50,6 +50,8 @@ class InteractiveAuthorizationRequest extends TokenRequest {
       codeVerifier: codeVerifier,
       codeChallenge: codeChallenge,
       additionalParameters: additionalParameters,
+      dialogPadding: dialogPadding,
+      iconsColor: iconsColor,
       clientSecret: clientSecret,
       loginHint: loginHint,
       prompts: prompts,
@@ -71,6 +73,8 @@ class InteractiveAuthorizationRequest extends TokenRequest {
     String? loginHint,
     super.prompts,
     Map<String, String>? additionalParameters,
+    this.dialogPadding = EdgeInsets.zero,
+    this.iconsColor = Colors.black,
     this.popupWidth = 640,
     this.popupHeight = 480,
     this.useWebPopup = true,

@@ -286,7 +286,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.0.36"
+    version: "1.0.37"
   openidconnect_platform_interface:
     dependency: transitive
     description:
@@ -299,10 +299,10 @@ packages:
     dependency: transitive
     description:
       name: openidconnect_web
-      sha256: "3e0689e4a1f61cc46543c9441be8d0b0ffdcd0c667c6ea3665a5577a43141f08"
+      sha256: "0100bbc472724212d135c12ccdd170563ca62a80cb45efbf777a96984bddaed6"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.25"
+    version: "1.0.26"
   path:
     dependency: transitive
     description:

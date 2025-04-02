@@ -55,20 +55,16 @@ class OpenIdConnect {
     await EncryptedSharedPreferencesAsync.initialize(encryptionKey);
   }
 
-  static Future<OpenIdConfiguration> getConfiguration(
-      String discoveryDocumentUri) async {
-    final response =
-        await httpRetry(() => http.get(Uri.parse(discoveryDocumentUri)));
+  static Future<OpenIdConfiguration> getConfiguration(String discoveryDocumentUri) async {
+    final response = await httpRetry(() => http.get(Uri.parse(discoveryDocumentUri)));
     if (response == null) {
-      throw ArgumentError(
-          "The discovery document could not be found at: ${discoveryDocumentUri}");
+      throw ArgumentError("The discovery document could not be found at: ${discoveryDocumentUri}");
     }
 
     return OpenIdConfiguration.fromJson(response);
   }
 
-  static Future<AuthorizationResponse> authorizePassword(
-      {required PasswordAuthorizationRequest request}) async {
+  static Future<AuthorizationResponse> authorizePassword({required PasswordAuthorizationRequest request}) async {
     final response = await httpRetry(
       () => http.post(
         Uri.parse(request.configuration.tokenEndpoint),
@@ -87,6 +83,13 @@ class OpenIdConnect {
     required InteractiveAuthorizationRequest request,
   }) async {
     late String? responseUrl;
+    bool useFullScreen = false;
+
+    if (request.additionalParameters != null) {
+      if (request.additionalParameters!['useFullScreen'] != null) {
+        useFullScreen = request.additionalParameters!['useFullScreen'] == 'true';
+      }
+    }
 
     final authEndpoint = Uri.parse(request.configuration.authorizationEndpoint);
     final uri = authEndpoint.replace(
@@ -103,8 +106,11 @@ class OpenIdConnect {
         title: title,
         authorizationUrl: uri.toString(),
         redirectUrl: request.redirectUrl,
+        dialogPadding: request.dialogPadding,
+        iconsColor: request.iconsColor,
         popupHeight: request.popupHeight,
         popupWidth: request.popupWidth,
+        useFullScreen: useFullScreen,
       );
     } else if (kIsWeb) {
       final storage = EncryptedSharedPreferencesAsync.getInstance();
@@ -159,17 +165,13 @@ class OpenIdConnect {
 
     if (error != null && error.isNotEmpty)
       throw ArgumentError(
-        AUTHORIZE_ERROR_MESSAGE_FORMAT
-            .replaceAll("%1", AUTHORIZE_ERROR_CODE)
-            .replaceAll("%2", error),
+        AUTHORIZE_ERROR_MESSAGE_FORMAT.replaceAll("%1", AUTHORIZE_ERROR_CODE).replaceAll("%2", error),
       );
 
     var authCode = resultUri.queryParameters['code'];
-    if (authCode == null || authCode.isEmpty)
-      throw AuthenticationException(ERROR_INVALID_RESPONSE);
+    if (authCode == null || authCode.isEmpty) throw AuthenticationException(ERROR_INVALID_RESPONSE);
 
-    var state = resultUri.queryParameters['state'] ??
-        resultUri.queryParameters['session_state'];
+    var state = resultUri.queryParameters['state'] ?? resultUri.queryParameters['session_state'];
 
     final body = {
       "client_id": request.clientId,
@@ -188,14 +190,12 @@ class OpenIdConnect {
       ),
     );
 
-    if (response == null) if (response == null)
-      throw UnsupportedError('The response was null.');
+    if (response == null) if (response == null) throw UnsupportedError('The response was null.');
 
     return AuthorizationResponse.fromJson(response);
   }
 
-  static Future<AuthorizationResponse> authorizeDevice(
-      {required DeviceAuthorizationRequest request}) async {
+  static Future<AuthorizationResponse> authorizeDevice({required DeviceAuthorizationRequest request}) async {
     var response = await httpRetry(
       () => http.post(
         Uri.parse(request.configuration.deviceAuthorizationEndpoint!),
@@ -237,31 +237,24 @@ class OpenIdConnect {
 
       final json = jsonDecode(pollingResponse.body) as Map<String, dynamic>;
 
-      if (pollingResponse.statusCode >= 200 &&
-          pollingResponse.statusCode < 300) {
+      if (pollingResponse.statusCode >= 200 && pollingResponse.statusCode < 300) {
         authorizationResponse = AuthorizationResponse.fromJson(json);
         break;
       }
 
       //Check the error message
       final error = json["error"]?.toString();
-      if (error == null ||
-          error == "invalid_token" ||
-          error == "expired_token" ||
-          error == "access_denied")
-        throw AuthenticationException(json["error_description"].toString());
+      if (error == null || error == "invalid_token" || error == "expired_token" || error == "access_denied") throw AuthenticationException(json["error_description"].toString());
 
       if (error == "slow_down") pollingInterval += 2;
 
-      if (DateTime.now().isAfter(codeResponse.expiresAt))
-        throw AuthenticationException(ERROR_USER_CLOSED);
+      if (DateTime.now().isAfter(codeResponse.expiresAt)) throw AuthenticationException(ERROR_USER_CLOSED);
     }
 
     return authorizationResponse;
   }
 
-  static Future<DeviceCodeResponse> authorizeDeviceGetDeviceCodeResponse(
-      {required DeviceAuthorizationRequest request}) async {
+  static Future<DeviceCodeResponse> authorizeDeviceGetDeviceCodeResponse({required DeviceAuthorizationRequest request}) async {
     var response = await httpRetry(
       () => http.post(
         Uri.parse(request.configuration.deviceAuthorizationEndpoint!),
@@ -276,10 +269,8 @@ class OpenIdConnect {
     return codeResponse;
   }
 
-  static Future<AuthorizationResponse>
-      authorizeDeviceCompleteDeviceCodeResponseRequest(
-          {required DeviceAuthorizationRequest request,
-          required DeviceCodeResponse codeResponse}) async {
+  static Future<AuthorizationResponse> authorizeDeviceCompleteDeviceCodeResponseRequest(
+      {required DeviceAuthorizationRequest request, required DeviceCodeResponse codeResponse}) async {
     await launchUrl(
       Uri.parse(codeResponse.verificationUrlComplete).replace(
         queryParameters:
@@ -300,8 +291,7 @@ class OpenIdConnect {
       "client_id": request.clientId,
     };
 
-    if (request.clientSecret != null)
-      pollingBody = {"client_secret": request.clientSecret!, ...pollingBody};
+    if (request.clientSecret != null) pollingBody = {"client_secret": request.clientSecret!, ...pollingBody};
 
     late AuthorizationResponse authorizationResponse;
 
@@ -314,31 +304,24 @@ class OpenIdConnect {
 
       final json = jsonDecode(pollingResponse.body) as Map<String, dynamic>;
 
-      if (pollingResponse.statusCode >= 200 &&
-          pollingResponse.statusCode < 300) {
+      if (pollingResponse.statusCode >= 200 && pollingResponse.statusCode < 300) {
         authorizationResponse = AuthorizationResponse.fromJson(json);
         break;
       }
 
       //Check the error message
       final error = json["error"]?.toString();
-      if (error == null ||
-          error == "invalid_token" ||
-          error == "expired_token" ||
-          error == "access_denied")
-        throw AuthenticationException(json["error_description"].toString());
+      if (error == null || error == "invalid_token" || error == "expired_token" || error == "access_denied") throw AuthenticationException(json["error_description"].toString());
 
       if (error == "slow_down") pollingInterval += 2;
 
-      if (DateTime.now().isAfter(codeResponse.expiresAt))
-        throw AuthenticationException(ERROR_USER_CLOSED);
+      if (DateTime.now().isAfter(codeResponse.expiresAt)) throw AuthenticationException(ERROR_USER_CLOSED);
     }
 
     return authorizationResponse;
   }
 
-  static Future<AuthorizationResponse> refreshToken(
-      {required RefreshRequest request}) async {
+  static Future<AuthorizationResponse> refreshToken({required RefreshRequest request}) async {
     final response = await httpRetry(
       () => http.post(
         Uri.parse(request.configuration.tokenEndpoint),
@@ -354,8 +337,7 @@ class OpenIdConnect {
   static Future<void> logout({required LogoutRequest request}) async {
     if (request.configuration.endSessionEndpoint == null) return;
 
-    final url = Uri.parse(request.configuration.endSessionEndpoint!)
-        .replace(queryParameters: request.toMap());
+    final url = Uri.parse(request.configuration.endSessionEndpoint!).replace(queryParameters: request.toMap());
 
     try {
       await httpRetry(
@@ -389,8 +371,7 @@ class OpenIdConnect {
     required OpenIdConfiguration configuration,
     bool autoRefresh = true,
   }) async {
-    if (!kIsWeb)
-      return null; //TODO: Change this to not bypass if other platforms need these.
+    if (!kIsWeb) return null; //TODO: Change this to not bypass if other platforms need these.
 
     final response = await _platform.processStartup();
 
@@ -439,15 +420,12 @@ class OpenIdConnect {
     }
   }
 
-  static Future<Map<String, dynamic>> getUserInfo(
-      {required UserInfoRequest request}) async {
+  static Future<Map<String, dynamic>> getUserInfo({required UserInfoRequest request}) async {
     try {
       final response = await httpRetry(
         () => http.get(
           Uri.parse(request.configuration.userInfoEndpoint),
-          headers: {
-            "Authorization": "${request.tokenType} ${request.accessToken}"
-          },
+          headers: {"Authorization": "${request.tokenType} ${request.accessToken}"},
         ),
       );
 
@@ -459,15 +437,12 @@ class OpenIdConnect {
     }
   }
 
-  static Future<void> registerUser(
-      {required UserRegistrationRequest request}) async {
+  static Future<void> registerUser({required UserRegistrationRequest request}) async {
     try {
       final response = await httpRetry(
         () => http.get(
           Uri.parse(request.configuration.registrationEndpoint!),
-          headers: {
-            "Authorization": "${request.tokenType} ${request.accessToken}"
-          },
+          headers: {"Authorization": "${request.tokenType} ${request.accessToken}"},
         ),
       );
 
