@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.0.38] = August 1st, 2025
+- Fix issue on logout with timing
+- Fix issue with clearing shared storage if there were items with . in them via dependency update.
+- Update dependencies
+
 ## [1.0.37] = April 1st, 2025
 
 - Update dependencies

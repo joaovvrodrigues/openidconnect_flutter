@@ -1,10 +1,10 @@
 name: openidconnect
 description: OpenIdConnect library for flutter.
-version: 1.0.37
+version: 1.0.38
 homepage: https://github.com/4D-Technologies/openidconnect_flutter
 
 environment:
-  sdk: ">=3.5.3 <4.0.0"
+  sdk: ">=3.8.0 <4.0.0"
   flutter: ">=3.5.3"
 
 dependencies:
@@ -23,14 +23,14 @@ dependencies:
 
   # TODO Remove these once native implementations can be added. Refactor so that the native implementations don't need to do the full cycle through.
   webview_flutter: ^4.10.0
-  encrypt_shared_preferences: ^0.9.9
+  encrypt_shared_preferences: ^0.9.10
   cryptography_plus: ^2.7.1
 
 dev_dependencies:
-  flutter_lints: ^5.0.0
+  flutter_lints:
   flutter_test:
     sdk: flutter
-  mockito: ^5.4.5
+  mockito: 
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
