@@ -27,19 +27,15 @@ class OpenIdConnectWeb extends OpenIdConnectPlatform {
   }) async {
     if (useWebRedirectLoop) {
       const AUTH_DESTINATION_KEY = "openidconnect_auth_destination_url";
-      html.window.sessionStorage[AUTH_DESTINATION_KEY] =
-          html.window.location.toString();
+      html.window.sessionStorage.setItem(AUTH_DESTINATION_KEY, html.window.location.toString());
       html.window.location.assign(authorizationUrl);
       return Future<String?>.value(null);
     }
 
-    final top = (html.window.outerHeight - popupHeight) / 2 +
-        (html.window.screen.availHeight);
-    final left = (html.window.outerWidth - popupWidth) / 2 +
-        (html.window.screen.availWidth);
+    final top = (html.window.outerHeight - popupHeight) / 2 + (html.window.screen.availHeight);
+    final left = (html.window.outerWidth - popupWidth) / 2 + (html.window.screen.availWidth);
 
-    var options =
-        'width=${popupWidth},height=${popupHeight},toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no&top=$top,left=$left';
+    var options = 'width=${popupWidth},height=${popupHeight},toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no&top=$top,left=$left';
 
     final child = html.window.open(
       authorizationUrl,
@@ -61,7 +57,7 @@ class OpenIdConnectWeb extends OpenIdConnectPlatform {
   Future<String?> processStartup() async {
     const AUTH_RESPONSE_KEY = "openidconnect_auth_response_info";
 
-    final url = html.window.sessionStorage[AUTH_RESPONSE_KEY];
+    final url = html.window.sessionStorage.getItem(AUTH_RESPONSE_KEY);
     html.window.sessionStorage.removeItem(AUTH_RESPONSE_KEY);
 
     return url;
