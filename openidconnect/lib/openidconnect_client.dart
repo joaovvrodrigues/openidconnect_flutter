@@ -263,10 +263,14 @@ class OpenIdConnectClient {
       //Make sure we have the discovery information
       await _verifyDiscoveryDocument();
 
+      if (_identity?.idToken == null || identity!.idToken.isEmpty)
+        return; //We check again because while the discovery document is being loaded the identity could have been nulled elsewhere.
+
       await OpenIdConnect.logout(
         request: LogoutRequest(
           configuration: configuration!,
-          idToken: _identity!.idToken,
+          idToken: _identity?.idToken ??
+              "", //Handles timing issue that can cause null here as last resort.
           state: _identity!.state,
         ),
       );
