@@ -1,6 +1,6 @@
 part of openidconnect;
 
-enum TokenType { idToken, accessToken }
+enum TokenType { idToken, accessToken, refreshToken }
 
 class RevokeTokenRequest {
   final OpenIdConfiguration configuration;
@@ -15,10 +15,11 @@ class RevokeTokenRequest {
     required this.tokenType,
     this.clientId,
     this.clientSecret,
-  });
+  }) : assert(tokenType != TokenType.idToken, "ID Tokens cannot be revoked.");
 
   Map<String, String> toMap() {
-    var map = {"token": token,
+    var map = {
+      "token": token,
       "token_type_hint": tokenType == TokenType.accessToken
           ? "access_token"
           : "refresh_token",

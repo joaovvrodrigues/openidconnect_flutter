@@ -1,6 +1,6 @@
 part of openidconnect;
 
-enum AuthEventTypes { Error, Success, Logout, NotLoggedIn, Refresh }
+enum AuthEventTypes { Error, Success, LoggingOut, NotLoggedIn, Refresh }
 
 @immutable
 class AuthEvent {
