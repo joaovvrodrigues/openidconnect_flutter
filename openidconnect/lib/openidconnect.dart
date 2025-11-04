@@ -458,7 +458,10 @@ class OpenIdConnect {
     return result;
   }
 
-  static Future<void> revokeToken({required RevokeTokenRequest request}) async {
+  static Future<void> revokeToken({
+    required RevokeTokenRequest request,
+    bool useBasicAuth = true,
+  }) async {
     if (request.configuration.revocationEndpoint == null) return;
 
     final uri = Uri.parse(request.configuration.revocationEndpoint!);
@@ -476,7 +479,11 @@ class OpenIdConnect {
 
     try {
       await httpRetry(
-        () => http.post(uri, body: request.toMap(), headers: headers),
+        () => http.post(
+          uri,
+          body: request.toMap(useBasicAuth: useBasicAuth),
+          headers: headers,
+        ),
       );
     } on HttpResponseException catch (e) {
       throw RevokeException(e.toString());

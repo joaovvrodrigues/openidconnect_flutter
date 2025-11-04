@@ -17,15 +17,17 @@ class RevokeTokenRequest {
     this.clientSecret,
   }) : assert(tokenType != TokenType.idToken, "ID Tokens cannot be revoked.");
 
-  Map<String, String> toMap() {
+  Map<String, String> toMap({bool useBasicAuth = true}) {
     var map = {
       "token": token,
       "token_type_hint": tokenType == TokenType.accessToken
           ? "access_token"
           : "refresh_token",
     };
-    if (clientId != null) map = {"client_id": clientId!, ...map};
-    if (clientSecret != null) map = {"client_secret": clientSecret!, ...map};
+    if (!useBasicAuth && clientId != null)
+      map = {"client_id": clientId!, ...map};
+    if (!useBasicAuth && clientSecret != null)
+      map = {"client_secret": clientSecret!, ...map};
     return map;
   }
 }

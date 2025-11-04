@@ -291,20 +291,23 @@ class OpenIdConnectClient {
     int popupWidth = 640,
     int popupHeight = 600,
     String? postLogoutRedirectUri,
+    bool useBasicAuth = true,
   }) async {
     if (_identity == null) return null;
 
     await _verifyDiscoveryDocument();
     final endSession = configuration?.endSessionEndpoint;
+    _raiseEvent(AuthEvent(AuthEventTypes.LoggingOut));
+
     // If provider doesn't support end_session, just revoke and clear locally
     if (endSession == null) {
-      await revokeTokens(); // keep existing revoke logic (revokes refresh/access)
+      await revokeTokens(
+        useBasicAuth: useBasicAuth,
+      ); // keep existing revoke logic (revokes refresh/access)
       await clearIdentity();
       _raiseEvent(AuthEvent(AuthEventTypes.NotLoggedIn));
       return null;
     }
-
-    _raiseEvent(AuthEvent(AuthEventTypes.LoggingOut));
 
     final request = InteractiveLogoutRequest(
       configuration: configuration!,
@@ -322,9 +325,13 @@ class OpenIdConnectClient {
         request: request,
       );
 
-      await revokeTokens(); // keep existing revoke logic (revokes refresh/access)
+      await revokeTokens(
+        useBasicAuth: useBasicAuth,
+      ); // keep existing revoke logic (revokes refresh/access)
     } else {
-      await revokeTokens(); // keep existing revoke logic (revokes refresh/access)
+      await revokeTokens(
+        useBasicAuth: useBasicAuth,
+      ); // keep existing revoke logic (revokes refresh/access)
       response = await OpenIdConnect.logoutInteractive(
         context: context,
         title: "Logout",
@@ -338,7 +345,7 @@ class OpenIdConnectClient {
     return response;
   }
 
-  Future<void> revokeTokens() async {
+  Future<void> revokeTokens({bool useBasicAuth = true}) async {
     if (_autoRenewTimer != null) _autoRenewTimer = null;
 
     if (_identity == null) return;
@@ -357,6 +364,7 @@ class OpenIdConnectClient {
             token: _identity!.refreshToken!,
             tokenType: TokenType.refreshToken,
           ),
+          useBasicAuth: useBasicAuth,
         );
       }
 
@@ -368,6 +376,7 @@ class OpenIdConnectClient {
           token: _identity!.accessToken,
           tokenType: TokenType.accessToken,
         ),
+        useBasicAuth: useBasicAuth,
       );
     } on Exception catch (e) {
       _raiseEvent(AuthEvent(AuthEventTypes.Error, message: e.toString()));

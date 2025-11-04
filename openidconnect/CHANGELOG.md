@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.0.41] - Nov 4th, 2025
+
+- Fixes issue with logout revokation of tokens where backend is picky about having dual auth and adds optional parameter to override basic auth and pass as part of the form post if necessary throughout the pipeline.
+- Fixes sequencing issue on logoutinteractive on event calling.
+
 ## [1.0.40] - Oct 31st, 2025
 
 - Fixes logout in the client so that it works in all cases other than code flow (this replaces the hack for keycloak). Use revokeToken for non-code flow if you aren't using the client library.
