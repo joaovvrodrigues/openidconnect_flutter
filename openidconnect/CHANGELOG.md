@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.0.42] - Nov 4th, 2025
+
+- Fixes some servers will error if you attempt to revoke both refresh and access tokens. Now only revokes refresh if present. If no refresh token, revokes the access token instead.
+
 ## [1.0.41] - Nov 4th, 2025
 
 - Fixes issue with logout revokation of tokens where backend is picky about having dual auth and adds optional parameter to override basic auth and pass as part of the form post if necessary throughout the pipeline.

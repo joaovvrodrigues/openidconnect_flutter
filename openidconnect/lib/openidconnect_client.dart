@@ -366,18 +366,19 @@ class OpenIdConnectClient {
           ),
           useBasicAuth: useBasicAuth,
         );
+      } else {
+        //Revoking access tokens happens automatically with refresh tokens.
+        await OpenIdConnect.revokeToken(
+          request: RevokeTokenRequest(
+            clientId: clientId,
+            clientSecret: clientSecret,
+            configuration: configuration!,
+            token: _identity!.accessToken,
+            tokenType: TokenType.accessToken,
+          ),
+          useBasicAuth: useBasicAuth,
+        );
       }
-
-      await OpenIdConnect.revokeToken(
-        request: RevokeTokenRequest(
-          clientId: clientId,
-          clientSecret: clientSecret,
-          configuration: configuration!,
-          token: _identity!.accessToken,
-          tokenType: TokenType.accessToken,
-        ),
-        useBasicAuth: useBasicAuth,
-      );
     } on Exception catch (e) {
       _raiseEvent(AuthEvent(AuthEventTypes.Error, message: e.toString()));
     }
