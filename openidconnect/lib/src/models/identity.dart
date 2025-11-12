@@ -19,28 +19,28 @@ class OpenIdIdentity extends AuthorizationResponse {
     String? refreshToken,
     String? state,
   }) : super(
-          expiresAt: expiresAt,
-          tokenType: tokenType,
-          accessToken: accessToken,
-          idToken: idToken,
-          refreshToken: refreshToken,
-          state: state,
-        ) {
+         expiresAt: expiresAt,
+         tokenType: tokenType,
+         accessToken: accessToken,
+         idToken: idToken,
+         refreshToken: refreshToken,
+         state: state,
+       ) {
     this.claims = JwtDecoder.decode(idToken);
 
     this.sub = claims["sub"].toString();
   }
 
   factory OpenIdIdentity.fromAuthorizationResponse(
-          AuthorizationResponse response) =>
-      OpenIdIdentity(
-        accessToken: response.accessToken,
-        expiresAt: response.expiresAt,
-        idToken: response.idToken,
-        tokenType: response.tokenType,
-        refreshToken: response.refreshToken,
-        state: response.state,
-      );
+    AuthorizationResponse response,
+  ) => OpenIdIdentity(
+    accessToken: response.accessToken,
+    expiresAt: response.expiresAt,
+    idToken: response.idToken,
+    tokenType: response.tokenType,
+    refreshToken: response.refreshToken,
+    state: response.state,
+  );
 
   static final _storage = EncryptedSharedPreferencesAsync.getInstance();
 
@@ -84,7 +84,7 @@ class OpenIdIdentity extends AuthorizationResponse {
       _storage.setString(_AUTHENTICATION_TOKEN_KEY, this.accessToken),
       _storage.setString(_ID_TOKEN_KEY, this.idToken),
       _storage.setString(_TOKEN_TYPE_KEY, this.tokenType),
-      _storage.setInt(_EXPIRES_ON_KEY, this.expiresAt.millisecondsSinceEpoch)
+      _storage.setInt(_EXPIRES_ON_KEY, this.expiresAt.millisecondsSinceEpoch),
     ]);
 
     this.refreshToken == null
@@ -103,7 +103,7 @@ class OpenIdIdentity extends AuthorizationResponse {
       _storage.remove(_REFRESH_TOKEN_KEY),
       _storage.remove(_TOKEN_TYPE_KEY),
       _storage.remove(_EXPIRES_ON_KEY),
-      _storage.remove(_STATE_KEY)
+      _storage.remove(_STATE_KEY),
     ]);
   }
 
@@ -113,14 +113,16 @@ class OpenIdIdentity extends AuthorizationResponse {
       claims["name"]?.toString() ??
       (givenName == null ? familyName : "${givenName} ${familyName}");
   String? get userName =>
-      claims["preferred_username"]?.toString() ?? claims["sub"]?.toString();
+      claims["username"]?.toString() ??
+      claims["preferred_username"]?.toString() ??
+      claims["sub"]?.toString();
   String? get email => claims["email"]?.toString();
   String? get act => claims["act"]?.toString();
   List<String> get roles => claims["role"] == null
       ? List<String>.empty()
       : claims["role"] is String
-          ? <String>[claims["role"].toString()]
-          : List<String>.from(claims["role"] as Iterable<dynamic>);
+      ? <String>[claims["role"].toString()]
+      : List<String>.from(claims["role"] as Iterable<dynamic>);
   String? get picture => claims["picture"]?.toString();
 
   @override
