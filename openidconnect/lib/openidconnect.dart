@@ -173,8 +173,6 @@ class OpenIdConnect {
         title: title,
         authorizationUrl: uri.toString(),
         redirectUrl: request.postLogoutRedirectUrl,
-        popupHeight: request.popupHeight,
-        popupWidth: request.popupWidth,
       );
     } else if (kIsWeb) {
       responseUrl = await _platform.authorizeInteractive(
