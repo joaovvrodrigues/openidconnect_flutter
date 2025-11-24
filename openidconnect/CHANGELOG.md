@@ -1,6 +1,31 @@
 # Change Log
 
+## [1.0.43] - Nov 12th, 2025
+
+- Enable lookup based on username claim for user name in the client.
+
+## [1.0.42] - Nov 4th, 2025
+
+- Fixes some servers will error if you attempt to revoke both refresh and access tokens. Now only revokes refresh if present. If no refresh token, revokes the access token instead.
+
+## [1.0.41] - Nov 4th, 2025
+
+- Fixes issue with logout revokation of tokens where backend is picky about having dual auth and adds optional parameter to override basic auth and pass as part of the form post if necessary throughout the pipeline.
+- Fixes sequencing issue on logoutinteractive on event calling.
+
+## [1.0.40] - Oct 31st, 2025
+
+- Fixes logout in the client so that it works in all cases other than code flow (this replaces the hack for keycloak). Use revokeToken for non-code flow if you aren't using the client library.
+- Adds logoutInteractive for code flow in the client (you can do this manually using the new types as well)
+- Fixes issue with isLoggedIn() so that it returns correctly when the token isn't expired.
+- Fixes cancellation of the renew timer in the client
+
+## [1.0.39] - Oct 31st, 2025
+
+- Enables the logging out event
+
 ## [1.0.38] = August 1st, 2025
+
 - Fix issue on logout with timing
 - Fix issue with clearing shared storage if there were items with . in them via dependency update.
 - Update dependencies

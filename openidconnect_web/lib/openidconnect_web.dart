@@ -27,7 +27,8 @@ class OpenIdConnectWeb extends OpenIdConnectPlatform {
   }) async {
     if (useWebRedirectLoop) {
       const AUTH_DESTINATION_KEY = "openidconnect_auth_destination_url";
-      html.window.sessionStorage.setItem(AUTH_DESTINATION_KEY, html.window.location.toString());
+      html.window.sessionStorage
+          .setItem(AUTH_DESTINATION_KEY, html.window.location.toString());
       html.window.location.assign(authorizationUrl);
       return Future<String?>.value(null);
     }
