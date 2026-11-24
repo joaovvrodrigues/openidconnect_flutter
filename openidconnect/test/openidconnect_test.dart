@@ -1,41 +1,49 @@
+import 'package:encrypt_shared_preferences/provider.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:openidconnect/openidconnect.dart';
+import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';
+import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 
-const TEST_ID_TOKEN =
+const tokenIdTeste =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
 
 void main() {
-  group("openididentity", () {
-    test("save identity", () async {
+  group('identidade OpenID', () {
+    setUp(() async {
+      SharedPreferencesAsyncPlatform.instance =
+          InMemorySharedPreferencesAsync.empty();
+      await EncryptedSharedPreferencesAsync.initialize(
+        List.filled(16, 'x').join(),
+      );
+    });
+
+    tearDown(() {
+      SharedPreferencesAsyncPlatform.instance = null;
+    });
+    test('salva a identidade', () async {
       final identity = OpenIdIdentity(
         accessToken: "testing_access_token",
         expiresAt: DateTime.now(),
-        idToken: TEST_ID_TOKEN,
+        idToken: tokenIdTeste,
         tokenType: "Bearer",
       );
 
       await identity.save();
     });
 
-    test("load identity", () async {
+    test('recupera a identidade salva', () async {
       final identity = OpenIdIdentity(
         accessToken: "testing_access_token",
         expiresAt: DateTime.now(),
-        idToken: TEST_ID_TOKEN,
+        idToken: tokenIdTeste,
         tokenType: "Bearer",
       );
 
       await identity.save();
 
       final loaded = await OpenIdIdentity.load();
-      expect(loaded, isNot(null));
+      expect(loaded?.accessToken, identity.accessToken);
+      expect(loaded?.idToken, identity.idToken);
     });
   });
-  // test('adds one to input values', () {
-  //   final calculator = Calculator();
-  //   expect(calculator.addOne(2), 3);
-  //   expect(calculator.addOne(-7), -6);
-  //   expect(calculator.addOne(0), 1);
-  // });
 }

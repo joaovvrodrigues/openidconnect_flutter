@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.0.44] - 2026-11-24
+
+- Update cryptography for modern JavaScript interop and keep PKCE S256 compatible with WebAssembly.
+- Update the compatible HTTP, storage, WebView, and URL launcher dependencies.
+
 ## [1.0.43] - Nov 12th, 2025
 
 - Enable lookup based on username claim for user name in the client.
