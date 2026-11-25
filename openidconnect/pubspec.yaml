@@ -4,14 +4,15 @@ version: 1.0.44
 homepage: https://github.com/4D-Technologies/openidconnect_flutter
 
 environment:
-  sdk: ^3.11.0
-  flutter: ">=3.41.0"
+  sdk: ^3.13.0
+  flutter: ">=3.47.0"
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_web_plugins:
     sdk: flutter
+  material_ui: ^1.11.1
   openidconnect_platform_interface: ^1.0.17
   openidconnect_web: ^1.0.26
   # openidconnect_windows: ^0.0.6
@@ -33,6 +34,7 @@ dev_dependencies:
     sdk: flutter
   mockito: ^5.8.1
   shared_preferences_platform_interface: ^2.4.2
+  webview_flutter_platform_interface: ^2.15.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

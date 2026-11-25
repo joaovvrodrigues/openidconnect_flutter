@@ -34,6 +34,8 @@ Currently supports:
 
 ## Getting Started
 
+On Android and iOS, the interactive WebView uses `package:material_ui`. Host the route under a `MaterialApp` from that package, and use its `GlobalMaterialLocalizations.delegates` for supported locales other than US English.
+
 1. Add openidconnect to your pubspec.yaml file
 2. Import openidconnect: import 'package:openidconnect/openidconnect.dart';
 3. Call the various methods: on OpenIdConnect OR use OpenIdConnectClient and subscribe to the events

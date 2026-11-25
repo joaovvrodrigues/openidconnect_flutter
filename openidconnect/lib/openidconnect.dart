@@ -6,7 +6,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:encrypt_shared_preferences/provider.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:http/http.dart' as http;
 import 'package:cryptography_plus/cryptography_plus.dart' as crypto;
 import 'package:jwt_decoder/jwt_decoder.dart';
